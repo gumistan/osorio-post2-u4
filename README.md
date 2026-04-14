@@ -11,7 +11,10 @@ Laboratorio 2 de la Unidad 4: Implementación de macros con parámetros, etiquet
 
 ## Estructura del Proyecto
 - `macros.asm`: Biblioteca modular que contiene un conjunto de macros reutilizables para operaciones frecuentes de DOS (finalizar programa, saltos de línea, impresión de cadenas, lectura de teclado y bucles controlados).
+- `programa2.asm`: Programa principal que utiliza `%include` para invocar las macros y realizar impresiones repetitivas.
 
+## Compilación y ejecución
+Para compilar y enlazar el programa en DOSBox:
 ## Compilación y ejecución
 nasm -f obj programa2.asm -o programa2.obj -l programa2.lst 
 alink programa2.obj -oEXE -o programa2.exe -entry main 
