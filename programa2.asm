@@ -2,11 +2,13 @@
 %include "macros.asm" ; incluir biblioteca de macros utilitarias
 
 section .data
-    titulo db "=== Macros y Control de Flujo ===", 0Dh, 0Ah, 24h
-    linea_a db "[Linea A] Primera impresion", 0Dh, 0Ah, 24h
-    linea_b db "[Linea B] Segunda impresion", 0Dh, 0Ah, 24h
-    msg_suma db "Resultado de la suma (1+2+3): ", 24h
-    msg_fin db "Fin del programa.", 0Dh, 0Ah, 24h
+    titulo      db "=== Macros y Control de Flujo ===", 0Dh, 0Ah, 24h
+    linea_a     db "[Linea A] Primera impresion", 0Dh, 0Ah, 24h
+    linea_b     db "[Linea B] Segunda impresion", 0Dh, 0Ah, 24h
+    msg_suma    db "Suma acumulada (1+2+3): ", 24h
+    msg_mayor   db "El valor mayor es: ", 24h
+    msg_iguales db "Los valores son iguales.", 0Dh, 0Ah, 24h
+    msg_fin     db 0Dh, 0Ah, "Fin del programa.", 0Dh, 0Ah, 24h
 
 section .bss
     valor_a resw 1
@@ -16,44 +18,74 @@ section .text
     global main
 
 main:
-    ; Configuración del segmento de datos
-    mov ax, @data
+    ; 1. Configuración inicial del segmento de datos
+    mov ax, data
     mov ds, ax
 
-    ; 1. Imprimir el título
+    ; 2. Demostración de macros (Paso 3)
     print_str titulo 
-    
-    ; 2. Demostración de macro repetir_str
     repetir_str linea_a, 3 
     nueva_linea            
     
     repetir_str linea_b, 2 
     nueva_linea
 
-    ; --- PASO 4: Lógica de la suma acumulativa ---
-    print_str msg_suma  ; Imprime el texto de la suma
-    
-    mov cx, 3           ; Queremos sumar 1+2+3
-    call sumar_serie     ; Llamamos al procedimiento (el resultado queda en AX)
-    
-    print_digito        ; Macro que convierte el 6 de AX a texto y lo imprime
+    ; 3. Ejecución de la Suma Acumulativa (Paso 4)
+    print_str msg_suma
+    mov cx, 3           ; N = 3 (1+2+3 = 6)
+    call sumar_serie    ; El resultado queda en AX
+    print_digito        ; Imprime el '6'
     nueva_linea
     nueva_linea
 
-    ; 3. Finalizar
+    ; 4. Ejecución de la Comparación (Paso 5)
+    ; Caso de prueba: AX=7 vs BX=3
+    mov ax, 7
+    mov bx, 3
+    call comparar_e_imprimir
+
+    ; 5. Finalización
     print_str msg_fin
-    fin_dos ; cerrar programa
+    fin_dos 
 
 ; ---------------------------------------------------------
-; Procedimiento: suma acumulativa 1+2+3+...+N
-; Entrada: CX = N 
-; Salida: AX = suma total
+; PROCEDIMIENTOS 
 ; ---------------------------------------------------------
+
+; --- Procedimiento: sumar_serie ---
 sumar_serie:
-    push cx         ; Guardamos CX para no perder el contador original
-    xor ax, ax      ; AX = 0 (aquí empezamos a sumar)
+    push cx         ; Preservar contador
+    xor ax, ax      ; Limpiar acumulador
 .paso:
-    add ax, cx      ; Sumamos el valor actual de CX a AX
-    loop .paso      ; Resta 1 a CX y salta a .paso si CX no es 0
-    pop cx          ; Recuperamos el valor original de CX
-    ret             ; Regresamos a donde nos llamaron
+    add ax, cx      ; Sumar
+    loop .paso      ; Decrementar CX y saltar si no es cero
+    pop cx          ; Restaurar contador
+    ret
+
+; --- Procedimiento: comparar_e_imprimir ---
+comparar_e_imprimir:
+    push ax
+    push bx
+    cmp ax, bx      ; Comparar AX y BX
+    je .son_iguales ; Salto si son iguales
+    jg .ax_mayor    ; Salto si AX > BX
+    
+    ; Caso BX es mayor 
+    print_str msg_mayor
+    mov al, bl      ; Mover el mayor (BX) a AL para imprimir
+    print_digito
+    jmp .fin_comp   ; Saltar al final para evitar ejecutar el caso AX mayor
+
+.ax_mayor:
+    print_str msg_mayor
+    print_digito    ; AX ya está en la parte baja (AL)
+    jmp .fin_comp
+
+.son_iguales:
+    print_str msg_iguales
+
+.fin_comp:
+    nueva_linea
+    pop bx
+    pop ax
+    ret
