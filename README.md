@@ -14,6 +14,7 @@ Laboratorio 2 de la Unidad 4: Implementación de macros con parámetros, etiquet
 - `programa2.asm`: Programa principal que utiliza `%include` para invocar las macros y realizar impresiones repetitivas.
 - `Procedimiento sumar_serie`: Implementa un bucle `LOOP` para realizar la suma acumulada de 1 hasta N, demostrando el uso de la pila (`push`/`pop`) y el registro acumulador `AX`.
 - `Procedimiento comparar_e_imprimir`: Lógica de decisión mediante saltos condicionales.
+- `programa2.asm`: Código integrador que ejecuta la secuencia de pruebas.
 
 ## Compilación y ejecución
 Para compilar y enlazar el programa en DOSBox:
